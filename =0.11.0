@@ -1,0 +1,6 @@
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: blobfile in /nas-ctm01/homes/pfsousa/.local/lib/python3.11/site-packages (2.1.1)
+Requirement already satisfied: pycryptodomex~=3.8 in /nas-ctm01/homes/pfsousa/.local/lib/python3.11/site-packages (from blobfile) (3.20.0)
+Requirement already satisfied: urllib3<3,>=1.25.3 in /usr/local/miniconda3/lib/python3.11/site-packages (from blobfile) (1.26.18)
+Requirement already satisfied: lxml~=4.9 in /nas-ctm01/homes/pfsousa/.local/lib/python3.11/site-packages (from blobfile) (4.9.4)
+Requirement already satisfied: filelock~=3.0 in /nas-ctm01/homes/pfsousa/.local/lib/python3.11/site-packages (from blobfile) (3.13.1)

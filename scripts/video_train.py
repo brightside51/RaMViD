@@ -15,9 +15,7 @@ from diffusion_openai.resample import create_named_schedule_sampler
 from diffusion_openai.script_util import (
     model_and_diffusion_defaults,
     create_model_and_diffusion,
-    args_to_dict,
-    add_dict_to_argparser,
-)
+    args_to_dict, add_dict_to_argparser)
 from diffusion_openai.train_util import TrainLoop
 
 def main():
@@ -97,7 +95,7 @@ def create_argparser():
         weight_decay=0.0,
         lr_anneal_steps=0,
         batch_size=64,
-        microbatch=32,  # -1 disables microbatches
+        microbatch=32,      # -1 disables microbatches
         ema_rate="0.9999",  # comma-separated list of EMA values
         log_interval=10,
         save_interval=2000,

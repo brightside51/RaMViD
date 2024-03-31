@@ -27,6 +27,7 @@ def setup_dist():
 
     comm = MPI.COMM_WORLD
     backend = "gloo" if not th.cuda.is_available() else "nccl"
+    #backend = "gloo"
 
     if backend == "gloo":
         hostname = "localhost"
@@ -80,7 +81,9 @@ def sync_params(params):
     """
     for p in params:
         with th.no_grad():
-            dist.broadcast(p, 0)
+            #print(p)
+            dist.broadcast(p.detach(), 0)
+            #dist.broadcast(p, 0)
 
 
 def _find_free_port():
