@@ -26,8 +26,8 @@ def setup_dist():
         return
 
     comm = MPI.COMM_WORLD
-    backend = "gloo" if not th.cuda.is_available() else "nccl"
-    #backend = "gloo"
+    #backend = "gloo" if not th.cuda.is_available() else "nccl"
+    backend = "gloo"
 
     if backend == "gloo":
         hostname = "localhost"

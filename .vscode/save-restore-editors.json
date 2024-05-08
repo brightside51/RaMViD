@@ -1,0 +1,27 @@
+{
+  "tabs": [
+    {
+      "name": "RaMViD (18/4/2024)",
+      "tabGroups": [
+        {
+          "files": [
+            "file:///x%3A/nas-ctm01/homes/pfsousa/metabreast/RaMViD/cfg_V0.sh",
+            "file:///x%3A/nas-ctm01/homes/pfsousa/metabreast/RaMViD/diffusion_openai/train_util.py",
+            "file:///x%3A/nas-ctm01/homes/pfsousa/metabreast/RaMViD/diffusion_openai/logger.py",
+            "file:///x%3A/nas-ctm01/homes/pfsousa/metabreast/logs/ramvid/V0/output.out",
+            "file:///x%3A/nas-ctm01/homes/pfsousa/metabreast/logs/ramvid/V0/error.out"
+          ],
+          "viewColumn": 1
+        }
+      ],
+      "layout": {
+        "orientation": 1,
+        "groups": [
+          {
+            "size": 975
+          }
+        ]
+      }
+    }
+  ]
+}

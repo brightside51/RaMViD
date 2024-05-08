@@ -14,8 +14,6 @@ import tempfile
 import warnings
 from collections import defaultdict
 from contextlib import contextmanager
-from pytorch_lightning.loggers import TensorBoardLogger
-
 
 DEBUG = 10
 INFO = 20
@@ -37,7 +35,6 @@ class SeqWriter(object):
 
 class HumanOutputFormat(KVWriter, SeqWriter):
     def __init__(self, filename_or_file):
-        #self.train_logger = TensorBoardLogger("../results", 'train')
         if isinstance(filename_or_file, str):
             self.file = open(filename_or_file, "wt")
             self.own_file = True
@@ -70,11 +67,6 @@ class HumanOutputFormat(KVWriter, SeqWriter):
         dashes = "-" * (keywidth + valwidth + 7)
         lines = [dashes]
         for (key, val) in sorted(key2str.items(), key=lambda kv: kv[0].lower()):
-            #WIP
-            #print(f"{key}: {val}")
-            #print(key2str)
-            #print(f"Step: {key2str['step']}")
-            #self.train_logger.experiment.add_scalar(key, val, key2str['step'])
             lines.append(
                 "| %s%s | %s%s |"
                 % (key, " " * (keywidth - len(key)), val, " " * (valwidth - len(val)))
@@ -92,7 +84,6 @@ class HumanOutputFormat(KVWriter, SeqWriter):
     def writeseq(self, seq):
         seq = list(seq)
         for (i, elem) in enumerate(seq):
-            #self.train_logger.experiment.add_scalar(key, val, key2str['step'])
             self.file.write(elem)
             if i < len(seq) - 1:  # add space unless this is the last one
                 self.file.write(" ")
@@ -171,18 +162,22 @@ class TensorBoardOutputFormat(KVWriter):
         from tensorflow.python import pywrap_tensorflow
         from tensorflow.core.util import event_pb2
         from tensorflow.python.util import compat
+        from tensorflow.python.client import _pywrap_events_writer
 
         self.tf = tf
         self.event_pb2 = event_pb2
         self.pywrap_tensorflow = pywrap_tensorflow
-        self.writer = pywrap_tensorflow.EventsWriter(compat.as_bytes(path))
+        #self.writer = pywrap_tensorflow.EventsWriter(compat.as_bytes(path))
+        self.writer = _pywrap_events_writer.EventsWriter(compat.as_bytes(path))
 
     def writekvs(self, kvs):
         def summary_val(k, v):
-            kwargs = {"tag": k, "simple_value": float(v)}
-            return self.tf.Summary.Value(**kwargs)
+            print(k); print(v)
+            #kwargs = {"tag": k, "simple_value": float(v)}      #WIP
+            kwargs = {"tag": k, "simple_value": v} 
+            return self.tf.summary.Value(**kwargs)
 
-        summary = self.tf.Summary(value=[summary_val(k, v) for k, v in kvs.items()])
+        summary = self.tf.summary(value=[summary_val(k, v) for k, v in kvs.items()])
         event = self.event_pb2.Event(wall_time=time.time(), summary=summary)
         event.step = (
             self.step
@@ -199,7 +194,6 @@ class TensorBoardOutputFormat(KVWriter):
 
 def make_output_format(format, ev_dir, log_suffix=""):
     os.makedirs(ev_dir, exist_ok=True)
-    print(format)
     if format == "stdout":
         return HumanOutputFormat(sys.stdout)
     elif format == "log":
@@ -473,6 +467,7 @@ def configure(dir=None, format_strs=None, comm=None, log_suffix=""):
             format_strs = os.getenv("OPENAI_LOG_FORMAT", "stdout,log,csv").split(",")
         else:
             format_strs = os.getenv("OPENAI_LOG_FORMAT_MPI", "log").split(",")
+    format_strs = os.getenv("OPENAI_LOG_FORMAT_MPI", "tensorboard").split(",") #WIP
     format_strs = filter(None, format_strs)
     output_formats = [make_output_format(f, dir, log_suffix) for f in format_strs]
 

@@ -14,8 +14,6 @@ import tempfile
 import warnings
 from collections import defaultdict
 from contextlib import contextmanager
-from pytorch_lightning.loggers import TensorBoardLogger
-
 
 DEBUG = 10
 INFO = 20
@@ -37,7 +35,6 @@ class SeqWriter(object):
 
 class HumanOutputFormat(KVWriter, SeqWriter):
     def __init__(self, filename_or_file):
-        #self.train_logger = TensorBoardLogger("../results", 'train')
         if isinstance(filename_or_file, str):
             self.file = open(filename_or_file, "wt")
             self.own_file = True
@@ -70,11 +67,6 @@ class HumanOutputFormat(KVWriter, SeqWriter):
         dashes = "-" * (keywidth + valwidth + 7)
         lines = [dashes]
         for (key, val) in sorted(key2str.items(), key=lambda kv: kv[0].lower()):
-            #WIP
-            #print(f"{key}: {val}")
-            #print(key2str)
-            #print(f"Step: {key2str['step']}")
-            #self.train_logger.experiment.add_scalar(key, val, key2str['step'])
             lines.append(
                 "| %s%s | %s%s |"
                 % (key, " " * (keywidth - len(key)), val, " " * (valwidth - len(val)))
@@ -92,7 +84,6 @@ class HumanOutputFormat(KVWriter, SeqWriter):
     def writeseq(self, seq):
         seq = list(seq)
         for (i, elem) in enumerate(seq):
-            #self.train_logger.experiment.add_scalar(key, val, key2str['step'])
             self.file.write(elem)
             if i < len(seq) - 1:  # add space unless this is the last one
                 self.file.write(" ")
@@ -199,7 +190,6 @@ class TensorBoardOutputFormat(KVWriter):
 
 def make_output_format(format, ev_dir, log_suffix=""):
     os.makedirs(ev_dir, exist_ok=True)
-    print(format)
     if format == "stdout":
         return HumanOutputFormat(sys.stdout)
     elif format == "log":

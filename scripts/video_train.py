@@ -4,11 +4,13 @@ Train a diffusion model on images.
 
 import argparse
 import os, sys
-sys.path.insert(1, os.getcwd()) 
+sys.path.insert(1, os.getcwd())
+
+import torch
 import torch.distributed as dist
 import numpy as np
 
-import torch as th
+#import torch as th
 from diffusion_openai import dist_util, logger
 from diffusion_openai.video_datasets import load_data
 from diffusion_openai.resample import create_named_schedule_sampler
@@ -23,7 +25,7 @@ def main():
     parser, defaults = create_argparser()
     args = parser.parse_args()
     parameters = args_to_dict(args, defaults.keys())
-    # th.manual_seed(args.seed)
+    # torch.manual_seed(args.seed)
     # np.random.seed(args.seed)
 
     dist_util.setup_dist()
@@ -38,7 +40,7 @@ def main():
     )
 
     print(dist_util.dev())
-    # print(th.cuda.device_count())
+    print(torch.cuda.device_count())
     model.to(dist_util.dev())
     schedule_sampler = create_named_schedule_sampler(args.schedule_sampler, diffusion)
 

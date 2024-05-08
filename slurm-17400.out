@@ -1,0 +1,18 @@
+2024-04-24 07:13:16.940659: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-04-24 07:13:20.395500: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+1
+Traceback (most recent call last):
+  File "/nas-ctm01/homes/pfsousa/MetaBreast/RaMViD/scripts/video_train.py", line 126, in <module>
+    main()
+  File "/nas-ctm01/homes/pfsousa/MetaBreast/RaMViD/scripts/video_train.py", line 35, in main
+    logger.dumpkvs()
+  File "/nas-ctm01/homes/pfsousa/MetaBreast/RaMViD/diffusion_openai/logger.py", line 242, in dumpkvs
+    return get_current().dumpkvs()
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nas-ctm01/homes/pfsousa/MetaBreast/RaMViD/diffusion_openai/logger.py", line 373, in dumpkvs
+    fmt.writekvs(d)
+  File "/nas-ctm01/homes/pfsousa/MetaBreast/RaMViD/diffusion_openai/logger.py", line 178, in writekvs
+    summary = self.tf.Summary(value=[summary_val(k, v) for k, v in kvs.items()])
+              ^^^^^^^^^^^^^^^
+AttributeError: module 'tensorflow' has no attribute 'Summary'. Did you mean: 'summary'?

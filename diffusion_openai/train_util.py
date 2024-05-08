@@ -8,6 +8,7 @@ import torch as th
 import torch.distributed as dist
 from torch.nn.parallel.distributed import DistributedDataParallel as DDP
 from torch.optim import AdamW
+from pytorch_lightning.loggers import TensorBoardLogger
 
 from . import dist_util, logger
 from .fp16_util import (
@@ -68,6 +69,7 @@ class TrainLoop:
             if isinstance(ema_rate, float)
             else [float(x) for x in ema_rate.split(",")]
         )
+        self.train_logger = TensorBoardLogger("../results", 'train')
         self.log_interval = log_interval
         self.save_interval = save_interval
         self.resume_checkpoint = resume_checkpoint
@@ -258,6 +260,7 @@ class TrainLoop:
                 (loss * loss_scale).backward()
             else:
                 loss.backward()
+            self.train_logger.experiment.add_scalar('loss', loss.item(), (self.step + self.resume_step) / self.log_interval)
 
     def optimize_fp16(self):
         if any(not th.isfinite(p.grad).all() for p in self.model_params):
@@ -287,6 +290,7 @@ class TrainLoop:
         for p in self.master_params:
             sqsum += (p.grad ** 2).sum().item()
         logger.logkv_mean("grad_norm", np.sqrt(sqsum))
+        self.train_logger.experiment.add_scalar('grad_norm', np.sqrt(sqsum), (self.step + self.resume_step) / self.log_interval)
 
     def _anneal_lr(self):
         if self.anneal_type is None:
@@ -314,11 +318,11 @@ class TrainLoop:
         def save_checkpoint(rate, params):
             state_dict = self._master_params_to_state_dict(params)
             if dist.get_rank() == 0:
-                logger.log(f"saving model {rate}...")
                 if not rate:
                     filename = f"model{(self.step+self.resume_step):06d}.pt"
                 else:
                     filename = f"ema_{rate}_{(self.step+self.resume_step):06d}.pt"
+                logger.log(f"saving model {rate} at {filename}...")
                 with bf.BlobFile(bf.join(get_blob_logdir(), filename), "wb") as f:
                     th.save(state_dict, f)
 
